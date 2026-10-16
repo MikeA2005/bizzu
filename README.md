@@ -1,17 +1,23 @@
-# bizzu
+# Bizzu
 
-A new Flutter project.
+**Bizzu** es una aplicación móvil tipo marketplace universitario que permite a los estudiantes publicar, consultar y marcar como favoritos productos disponibles dentro de la comunidad universitaria.
 
-## Getting Started
+La aplicación busca facilitar el intercambio de productos entre estudiantes, ofreciendo una interfaz visual organizada y un flujo básico de publicación y consulta.
 
-This project is a starting point for a Flutter application.
+## Funcionalidades principales
 
-A few resources to get you started if this is your first Flutter project:
+* **Catálogo principal:** Muestra productos destacados, categorías y una barra de búsqueda.
+* **Publicación de productos:** Permite registrar nombre, descripción, precio, imagen y categoría.
+* **Validación de formularios:** Verifica campos obligatorios, precio numérico y selección de categoría.
+* **Consulta de productos:** Presenta imagen, precio, descripción, vendedor, horarios de entrega y calificación.
+* **Favoritos:** Permite marcar o desmarcar productos.
+* **Navegación:** Conecta el catálogo, el formulario de publicación y el detalle del producto.
+* **Gestión en memoria:** Los productos se almacenan temporalmente mediante `ProductService`, sin base de datos ni backend.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Componentes reutilizables
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* `CustomTextField`
+* `CustomAppBar`
+* `ProductCard`
+* `CategoryIcon`
+
