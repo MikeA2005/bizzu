@@ -1,6 +1,8 @@
-import 'package:bizzu/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:bizzu/theme/app_colors.dart';
+import 'package:bizzu/widgets/product_image.dart';
 
+// Tarjeta compacta utilizada dentro del listado de productos.
 class ProductCard extends StatelessWidget {
   final String title;
   final String price;
@@ -19,13 +21,11 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      // Container with rounded corners
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.surfaceLight,
           borderRadius: BorderRadius.circular(12),
         ),
-        // Column to hold the image, title, and price
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -42,18 +42,9 @@ class ProductCard extends StatelessWidget {
                         borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(12),
                         ),
-                        child: Image.network(
-                          image!,
+                        child: ProductImage(
+                          imageSource: image!,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(
-                              child: Icon(
-                                Icons.broken_image,
-                                size: 50,
-                                color: AppColors.textSecondaryLight,
-                              ),
-                            );
-                          },
                         ),
                       )
                     : const Center(
@@ -65,9 +56,8 @@ class ProductCard extends StatelessWidget {
                       ),
               ),
             ),
-
             Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
