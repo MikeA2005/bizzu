@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:bizzu/theme/app_colors.dart';
 
+// Configuración visual global utilizada por todos los widgets de Material.
 class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Paleta centralizada para mantener el diseño uniforme en toda la aplicación.
 class AppColors {
   AppColors._();
 

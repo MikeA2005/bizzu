@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bizzu/theme/app_colors.dart';
 
+// Campo de formulario reutilizable con estilo y validación personalizable.
 class CustomTextField extends StatelessWidget {
   final String label;
   final String hint;

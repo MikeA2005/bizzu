@@ -1,79 +1,85 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bizzu/models/product_model.dart';
 
-class ProductService extends ChangeNotifier {
-  // Singleton pattern, so we can access the same instance of ProductService throughout the app
+class ProductService {
   static final ProductService _instance = ProductService._internal();
   factory ProductService() => _instance;
   ProductService._internal();
 
-  // Product data
-  final List<ProductModel> _products = [
-    ProductModel(
-      id: '1',
-      name: 'Pizza Margarita',
-      description: 'Deliciosa pizza con salsa de tomate, queso mozzarella y albahaca fresca.',
-      price: 20000,
-      imageUrl: 'https://images.unsplash.com/photo-1596313535886-1c3190577fc7?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-      categoryId: '1',
-      sellerId: '1',
-      isFavorite: false,
-    ),
-    ProductModel(
-      id: '2',
-      name: 'Hamburguesa Clásica',
-      description: 'Jugosa hamburguesa con carne de res, lechuga, tomate y queso cheddar.',
-      price: 15000,
-      imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=699&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-      categoryId: '2',
-      sellerId: '2',
-      isFavorite: true,
-    ),
-  ];
+  final CollectionReference _productsRef = FirebaseFirestore.instance
+      .collection('products');
 
-  // Get all products
-  List<ProductModel> get products => List.unmodifiable(_products);
-
-  // Get product by ID
-  ProductModel getProductById(String id) {
-    return _products.firstWhere((p) => p.id == id);
+  /// Stream en tiempo real de TODOS los productos (sincronización bidireccional)
+  Stream<List<ProductModel>> getProductsStream({String? categoryId}) {
+    Query query = _productsRef.orderBy('createdAt', descending: true);
+    if (categoryId != null && categoryId.isNotEmpty) {
+      query = _productsRef
+          .where('categoryId', isEqualTo: categoryId)
+          .orderBy('createdAt', descending: true);
+    }
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => ProductModel.fromFirestore(doc))
+          .toList();
+    });
   }
 
-  // Get products by category
-  List<ProductModel> getProductsByCategory(String? categoryId) {
-    if (categoryId == null || categoryId.isEmpty) return products;
-    return _products.where((p) => p.categoryId == categoryId).toList();
+  /// Stream de los productos publicados únicamente por el usuario actual (para Gestión)
+  Stream<List<ProductModel>> getUserProductsStream(String sellerId) {
+    return _productsRef.where('sellerId', isEqualTo: sellerId).snapshots().map((
+      snapshot,
+    ) {
+      final list = snapshot.docs
+          .map((doc) => ProductModel.fromFirestore(doc))
+          .toList();
+      list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return list;
+    });
   }
 
-  // Add a new product
-  void addProduct({
+  /// Obtener un producto específico en tiempo real
+  Stream<ProductModel?> getProductByIdStream(String id) {
+    return _productsRef.doc(id).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      return ProductModel.fromFirestore(doc);
+    });
+  }
+
+  /// CREAR producto en Firestore
+  Future<void> addProduct({
     required String name,
     required String description,
     required double price,
     required String imageUrl,
     required String categoryId,
     required String sellerId,
-  }) {
+  }) async {
     final newProduct = ProductModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: '',
       name: name,
       description: description,
       price: price,
       imageUrl: imageUrl,
       categoryId: categoryId,
       sellerId: sellerId,
+      isFavorite: false,
+      createdAt: DateTime.now(),
     );
-    _products.insert(0, newProduct);
-    notifyListeners();
+    await _productsRef.add(newProduct.toMap());
   }
 
-  // Toggle favorite status of a product
-  void toggleFavorite(String productId) {
-    final index = _products.indexWhere((p) => p.id == productId);
-    if (index != -1) {
-      final current = _products[index];
-      _products[index] = current.copyWith(isFavorite: !current.isFavorite);
-      notifyListeners();
-    }
+  /// ACTUALIZAR producto existente en Firestore
+  Future<void> updateProduct(ProductModel product) async {
+    await _productsRef.doc(product.id).update(product.toMap());
+  }
+
+  /// ELIMINAR producto de Firestore
+  Future<void> deleteProduct(String productId) async {
+    await _productsRef.doc(productId).delete();
+  }
+
+  /// Alternar favorito en Firestore
+  Future<void> toggleFavorite(String productId, bool currentStatus) async {
+    await _productsRef.doc(productId).update({'isFavorite': !currentStatus});
   }
 }

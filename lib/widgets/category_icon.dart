@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bizzu/theme/app_colors.dart';
 
+// Widget visual usado para mostrar una categoría del catálogo.
 class CategoryIcon extends StatelessWidget {
   final String name;
   final IconData iconData;

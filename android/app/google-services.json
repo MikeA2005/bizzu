@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "412309697801",
+    "project_id": "bizzu-edd90",
+    "storage_bucket": "bizzu-edd90.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412309697801:android:48eadca44b26d3fbf14fd8",
+        "android_client_info": {
+          "package_name": "com.example.bizzu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUVwj4ImbEh4qa17Et8lTNuLLIZ3pVkLY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

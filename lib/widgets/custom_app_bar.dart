@@ -1,6 +1,7 @@
 import 'package:bizzu/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
+// Barra superior reutilizable para dar navegación y acciones comunes.
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData? leadingIcon;
   final void Function()? leadingOnPressed;
