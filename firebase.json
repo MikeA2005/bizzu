@@ -1,0 +1,28 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "bizzu-edd90",
+          "appId": "1:412309697801:android:48eadca44b26d3fbf14fd8",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "bizzu-edd90",
+          "configurations": {
+            "android": "1:412309697801:android:48eadca44b26d3fbf14fd8",
+            "ios": "1:412309697801:ios:f5dbd970af0de2f7f14fd8",
+            "macos": "1:412309697801:ios:f5dbd970af0de2f7f14fd8",
+            "web": "1:412309697801:web:dc2f75f3efc4511af14fd8",
+            "windows": "1:412309697801:web:b67198fc3e7d89e8f14fd8"
+          }
+        }
+      }
+    }
+  }
+}

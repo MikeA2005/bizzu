@@ -1,64 +1,51 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bizzu/models/review_model.dart';
 
-class ReviewService extends ChangeNotifier {
-  // Singleton pattern, so we can access the same instance of ReviewService throughout the app
+// Servicio remoto para consultar y registrar reseñas de productos.
+class ReviewService {
   static final ReviewService _instance = ReviewService._internal();
   factory ReviewService() => _instance;
   ReviewService._internal();
 
-  // Review data
-  final List<ReviewModel> _reviews = [
-    ReviewModel(
-      id: '1',
-      productId: '1',
-      authorId: '1',
-      rating: 5.0,
-      comment: '¡Excelente pizza! Muy sabrosa y con ingredientes frescos.',
-      date: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-    ReviewModel(
-      id: '2',
-      productId: '2',
-      authorId: '2',
-      rating: 4.0,
-      comment: 'La hamburguesa estaba buena, pero un poco grasosa.',
-      date: DateTime.now().subtract(const Duration(days: 2)),
-    ),
-  ];
+  final CollectionReference _reviewsRef = FirebaseFirestore.instance.collection(
+    'reviews',
+  );
 
-  // Get reviews by product ID
-  List<ReviewModel> getReviewsByProductId(String productId) {
-    return _reviews.where((r) => r.productId == productId).toList();
-  }
-
-  // Calculate average rating for a product
-  double getAverageRating(String productId) {
-    final productReviews = getReviewsByProductId(productId);
-    if (productReviews.isEmpty) return 0.0;
-    final totalRating = productReviews.fold<double>(
-      0.0,
-      (sum, r) => sum + r.rating,
+  /// Stream en tiempo real de las reseñas de un producto
+  Stream<List<ReviewModel>> getReviewsStreamByProductId(String productId) {
+    return _reviewsRef.where('productId', isEqualTo: productId).snapshots().map(
+      (snapshot) {
+        final reviews = snapshot.docs
+            .map((doc) => ReviewModel.fromFirestore(doc))
+            .toList();
+        reviews.sort((a, b) => b.date.compareTo(a.date));
+        return reviews;
+      },
     );
-    return totalRating / productReviews.length;
   }
 
-  // Add a new review
-  void addReview({
+  /// Calcula el promedio a partir de la lista recibida por el Stream
+  double calculateAverageRating(List<ReviewModel> reviews) {
+    if (reviews.isEmpty) return 0.0;
+    final total = reviews.fold<double>(0.0, (double sum, r) => sum + r.rating);
+    return total / reviews.length;
+  }
+
+  /// Registrar una nueva reseña en Firestore
+  Future<void> addReview({
     required String productId,
     required String authorId,
     required double rating,
     required String comment,
-  }) {
+  }) async {
     final newReview = ReviewModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: '',
       productId: productId,
       authorId: authorId,
       rating: rating,
       comment: comment,
       date: DateTime.now(),
     );
-    _reviews.insert(0, newReview);
-    notifyListeners();
+    await _reviewsRef.add(newReview.toMap());
   }
 }
